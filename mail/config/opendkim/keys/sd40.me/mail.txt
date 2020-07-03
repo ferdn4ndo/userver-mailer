@@ -1,0 +1,3 @@
+mail._domainkey	IN	TXT	( "v=DKIM1; h=sha256; k=rsa; "
+	  "p=MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAvMEu0+rJPLswyVr1MeI6bnzc+JfaRqdSLJq7UjxtDwbFju0PnriMW97ttnWK7VpL5CcVJ44wbnEwucXyinavL/0fD8amnI43L9hEztnIGZGDOifF3gzKKx/036PNt1WqGc5tfQoEH75dyHcND1Pv5DoY5q9LUSqNGWN/8v0tr08/kq1ZCBZaP91ZV9uHsAdxS/V6YYcZUOvxYs"
+	  "tI54rl+/5qsRniz7AIUAXJM1uMfTaILuqMj2X/CGl9QWQz+XwfSWRyyWcve+j4y/bo1JBaU3Y2aiWsxZ3zEeQQ+oFS/NLkYpPK6/8eUoCPLIqX4VrtQ66BeK7uEMIquackPHKyHQIDAQAB" )  ; ----- DKIM key mail for sd40.me

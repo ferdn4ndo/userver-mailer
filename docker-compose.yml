@@ -1,0 +1,50 @@
+version: '3'
+services:
+  mail:
+    container_name: mail
+    restart: unless-stopped
+    image: tvial/docker-mailserver:latest
+    hostname: ${HOSTNAME}
+    domainname: ${DOMAINNAME}
+    ports:
+      - "25:25"
+      - "143:143"
+      - "587:587"
+      - "993:993"
+    volumes:
+      - mail-data:/var/mail
+      - mail-state:/var/mail-state
+      - mail-logs:/var/log/mail
+      - ./mail/config/:/tmp/docker-mailserver/
+    env_file:
+      - mail/.env
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+
+  webmail:
+    container_name: webmail
+    restart: unless-stopped
+    build:
+      context: ./webmail
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+      - mail
+    env_file:
+      - webmail/.env
+    volumes:
+      - webmail-data:/rainloop/data
+    expose:
+      - 8888
+
+networks:
+  default:
+    external:
+      name: nginx-proxy
+
+volumes:
+  webmail-data:
+  mail-data:
+  mail-state:
+  mail-logs:

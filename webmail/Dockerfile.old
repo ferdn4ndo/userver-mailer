@@ -1,0 +1,7 @@
+FROM php:7.4-fpm-alpine
+
+RUN mkdir /var/www/html/rainloop && cd /var/www/html/rainloop
+
+EXPOSE 80
+
+#RUN curl -sL https://repository.rainloop.net/installer.php | php

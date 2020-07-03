@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo "Starting PHP..."
+exec php-fpm7
