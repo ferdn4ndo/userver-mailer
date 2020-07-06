@@ -22,9 +22,9 @@ services:
       - NET_ADMIN
       - SYS_PTRACE
 
-  userver-databackup:
+  userver-mailbackup:
     image: tiberiuc/backup-service
-    container_name: userver-databackup
+    container_name: userver-mailbackup
     restart: unless-stopped
     depends_on:
       - userver-mail
