@@ -1,7 +1,7 @@
 version: '3'
 services:
-  mail:
-    container_name: mail
+  userver-mail:
+    container_name: userver-mail
     restart: unless-stopped
     image: tvial/docker-mailserver:latest
     hostname: ${HOSTNAME}
@@ -22,15 +22,27 @@ services:
       - NET_ADMIN
       - SYS_PTRACE
 
-  webmail:
-    container_name: webmail
+  userver-databackup:
+    image: tiberiuc/backup-service
+    container_name: userver-databackup
+    restart: unless-stopped
+    env_file:
+      - ./backup/.env
+    volumes:
+      - mail-data:/backup/mail-data
+      - mail-state:/backup/mail-state
+      - mail-logs:/backup/mail-logs
+      - webmail-data:/backup/webmail-data
+
+  userver-webmail:
+    container_name: userver-webmail
     restart: unless-stopped
     build:
       context: ./webmail
       dockerfile: Dockerfile
     depends_on:
-      - postgres
-      - mail
+      - userver-postgres
+      - userver-mail
     env_file:
       - webmail/.env
     volumes:
