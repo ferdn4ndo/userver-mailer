@@ -26,6 +26,8 @@ services:
     image: tiberiuc/backup-service
     container_name: userver-databackup
     restart: unless-stopped
+    depends_on:
+      - userver-mail
     env_file:
       - ./backup/.env
     volumes:
@@ -41,7 +43,6 @@ services:
       context: ./webmail
       dockerfile: Dockerfile
     depends_on:
-      - userver-postgres
       - userver-mail
     env_file:
       - webmail/.env
