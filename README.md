@@ -4,11 +4,13 @@ A mail microservice stack containing SMTP, IMAP and POP servers (see [docker-mai
 
 It's part of the [uServer](https://github.com/users/ferdn4ndo/projects/1) stack project.
 
-# Environment
+
+## Setup
+
+### Environment
 
 Copy both `mail/.env.template` and `webmail/.env.template` to `mail/.env` and `webmail/.env`, respectively, and then edit them to match your server configuration.
 
-# Setup
 
 ### Start Containers
     docker-compose up --build
@@ -17,17 +19,17 @@ Copy both `mail/.env.template` and `webmail/.env.template` to `mail/.env` and `w
 
     docker exec -it mail sh -c "./setup.sh email add <user@domain> <password>"
 
-#### Generate DKIM keys
+### Generate DKIM keys
 
     docker exec -it mail sh -c "./setup.sh config dkim"
 
 As the keys are generated, you can configure your DNS server by just pasting the content of `config/opendkim/keys/domain.tld/mail.txt` in your `domain.tld.hosts` zone.
 
-#### Restart and update the container as deamon
+### Restart and update the container as deamon
 
     docker-compose down
     docker-compose up -d
 
-# License
+## License
 
 GNU Affero General Public License v3.0 as required by rainloop-webmail.
