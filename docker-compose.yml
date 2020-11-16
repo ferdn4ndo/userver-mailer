@@ -34,7 +34,6 @@ services:
       - mail-data:/backup/mail-data
       - mail-state:/backup/mail-state
       - mail-logs:/backup/mail-logs
-      - webmail-data:/backup/webmail-data
 
   userver-webmail:
     container_name: userver-webmail
@@ -46,8 +45,6 @@ services:
       - userver-mail
     env_file:
       - webmail/.env
-    volumes:
-      - webmail-data:/rainloop/data
     expose:
       - 8888
 
@@ -57,10 +54,6 @@ networks:
       name: nginx-proxy
 
 volumes:
-  webmail-data:
-    driver: local-persist
-    driver_opts:
-      mountpoint: ${CONTAINERVOLUME}/rainloop/data
   mail-data:
   mail-state:
   mail-logs:
