@@ -47,6 +47,8 @@ services:
       - webmail/.env
     expose:
       - 80
+    volumes:
+      - userver-web_nginx-certs:/certs
 
 networks:
   default:
@@ -57,3 +59,5 @@ volumes:
   mail-data:
   mail-state:
   mail-logs:
+  userver-web_nginx-certs:
+    external: true
