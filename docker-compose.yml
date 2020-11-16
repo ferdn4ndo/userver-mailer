@@ -48,7 +48,7 @@ services:
     expose:
       - 80
     volumes:
-      - nginx-certs:/certs
+      - ../userver-web/certs:/certs:ro
       - ./webmail/sites-available:/etc/apache2/sites-available
 
 networks:
@@ -60,6 +60,3 @@ volumes:
   mail-data:
   mail-state:
   mail-logs:
-  nginx-certs:
-    external:
-      name: userver-web_nginx-certs
