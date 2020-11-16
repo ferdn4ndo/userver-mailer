@@ -15,6 +15,7 @@ services:
       - mail-data:/var/mail
       - mail-state:/var/mail-state
       - mail-logs:/var/log/mail
+      - ./mail/config/:/tmp/docker-mailserver/
     env_file:
       - mail/.env
     cap_add:
