@@ -16,6 +16,7 @@ services:
       - mail-state:/var/mail-state
       - mail-logs:/var/log/mail
       - ./mail/config/:/tmp/docker-mailserver/
+      - ../userver-web/certs:/certs:ro
     env_file:
       - mail/.env
     cap_add:
@@ -50,6 +51,7 @@ services:
     volumes:
       - ../userver-web/certs:/certs:ro
       - ./webmail/sites-available:/etc/apache2/sites-available
+      - ./config.inc.php:/var/www/html/conf/config.inc.php
 
 networks:
   default:
