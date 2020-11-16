@@ -57,6 +57,9 @@ networks:
 
 volumes:
   webmail-data:
+    driver: local-persist
+      driver_opts:
+        mountpoint: ${CONTAINERVOLUME}/rainloop/data
   mail-data:
   mail-state:
   mail-logs:
