@@ -46,7 +46,7 @@ services:
     env_file:
       - webmail/.env
     expose:
-      - 8888
+      - 80
 
 networks:
   default:
