@@ -51,7 +51,7 @@ services:
     volumes:
       - ../userver-web/certs:/certs:ro
       - ./webmail/sites-available:/etc/apache2/sites-available
-      - ./config.inc.php:/var/www/html/conf/config.inc.php
+      - ./webmail/config/imap.php:/var/www/html/config/imap.php
 
 networks:
   default:
