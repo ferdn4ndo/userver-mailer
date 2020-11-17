@@ -12,7 +12,7 @@ $config['imap_conn_options'] = array(
     'ssl_cert' => getenv('TLS_CERT_PEM_FILE'),
     'ssl_key'  => getenv('TLS_CERT_KEY_FILE'),
     // probably optional parameters
-    'ciphers' => 'TLSv1+HIGH:!aNull:@STRENGTH',
+    'ciphers' => 'ALL:!ADH:!LOW:!EXP:!aNULL:+HIGH:+MEDIUM',
     'peer_name'         => getenv('TLS_PEER_NAME'),
   )
 ); 
