@@ -51,7 +51,7 @@ services:
     volumes:
       - ../userver-web/certs:/certs:ro
       - ./webmail/sites-available:/etc/apache2/sites-available
-      - ./webmail/config/imap.php:/var/www/html/config/imap.php
+      - ./webmail/config:/var/roundcube/config
 
 networks:
   default:
