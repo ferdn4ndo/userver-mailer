@@ -17,11 +17,11 @@ Copy both `mail/.env.template` and `webmail/.env.template` to `mail/.env` and `w
 
 ### Create your mail accounts
 
-    docker exec -it mail sh -c "./setup.sh email add <user@domain> <password>"
+    docker exec -it userver-mail sh -c "./setup.sh email add <user@domain> <password>"
 
 ### Generate DKIM keys
 
-    docker exec -it mail sh -c "./setup.sh config dkim"
+    docker exec -it userver-mail sh -c "./setup.sh config dkim"
 
 As the keys are generated, you can configure your DNS server by just pasting the content of `config/opendkim/keys/domain.tld/mail.txt` in your `domain.tld.hosts` zone.
 
