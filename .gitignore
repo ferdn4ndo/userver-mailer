@@ -2,3 +2,6 @@ venv/
 .env
 
 .idea/
+
+mail/config/*
+!mail/config/.gitkeep

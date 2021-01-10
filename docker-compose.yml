@@ -16,6 +16,7 @@ services:
       - mail-state:/var/mail-state
       - mail-logs:/var/log/mail
       - ./mail/config/:/tmp/docker-mailserver/
+      - ../userver-web/certs:/certs:ro
     env_file:
       - mail/.env
     cap_add:
@@ -34,7 +35,6 @@ services:
       - mail-data:/backup/mail-data
       - mail-state:/backup/mail-state
       - mail-logs:/backup/mail-logs
-      - webmail-data:/backup/webmail-data
 
   userver-webmail:
     container_name: userver-webmail
@@ -46,10 +46,12 @@ services:
       - userver-mail
     env_file:
       - webmail/.env
-    volumes:
-      - webmail-data:/rainloop/data
     expose:
-      - 8888
+      - 80
+    volumes:
+      - ../userver-web/certs:/certs:ro
+      - ./webmail/sites-available:/etc/apache2/sites-available
+      - ./webmail/config:/var/roundcube/config
 
 networks:
   default:
@@ -57,7 +59,6 @@ networks:
       name: nginx-proxy
 
 volumes:
-  webmail-data:
   mail-data:
   mail-state:
   mail-logs:
