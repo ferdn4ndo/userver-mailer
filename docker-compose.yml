@@ -18,7 +18,7 @@ services:
       - ./mail/config/:/tmp/docker-mailserver/
       - ../userver-web/certs:/certs:ro
     env_file:
-      - mail/.env
+      - ./mail/.env
     cap_add:
       - NET_ADMIN
       - SYS_PTRACE
@@ -45,13 +45,22 @@ services:
     depends_on:
       - userver-mail
     env_file:
-      - webmail/.env
+      - ./webmail/.env
     expose:
       - 80
     volumes:
       - ../userver-web/certs:/certs:ro
       - ./webmail/sites-available:/etc/apache2/sites-available
       - ./webmail/config:/var/roundcube/config
+
+  userver-postfixadmin:
+    container_name: userver-postfixadmin
+    restart: unless-stopped
+    image: postfixadmin:latest
+    expose:
+      - 8080
+    env_file:
+      - ./postfixadmin/.env
 
 networks:
   default:
