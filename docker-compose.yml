@@ -58,7 +58,7 @@ services:
     restart: unless-stopped
     image: postfixadmin:latest
     expose:
-      - 8080
+      - 80
     env_file:
       - ./postfixadmin/.env
 
