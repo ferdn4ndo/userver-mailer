@@ -5,3 +5,12 @@ venv/
 
 mail/config/*
 !mail/config/.gitkeep
+
+data/*
+!data/.gitkeep
+
+logs/*
+!logs/.gitkeep
+
+state/*
+!state/.gitkeep
