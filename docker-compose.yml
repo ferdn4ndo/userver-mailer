@@ -24,7 +24,7 @@ services:
       - SYS_PTRACE
 
   userver-mailbackup:
-    image: tiberiuc/backup-service
+    image: istepanov/backup-to-s3
     container_name: userver-mailbackup
     restart: unless-stopped
     depends_on:
@@ -32,9 +32,9 @@ services:
     env_file:
       - ./backup/.env
     volumes:
-      - ./data:/backup/mail-data:ro
-      - ./state:/backup/mail-state:ro
-      - ./logs:/backup/mail-logs:ro
+      - ./data:/data/mail-data:ro
+      - ./state:/data/mail-state:ro
+      - ./logs:/data/mail-logs:ro
 
   userver-webmail:
     container_name: userver-webmail

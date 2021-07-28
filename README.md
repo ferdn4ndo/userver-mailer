@@ -2,6 +2,8 @@
 
 A mail microservice stack containing SMTP, IMAP and POP servers (see [docker-mailserver](https://github.com/tomav/docker-mailserver)) as also a webmail client (see [rainloop-webmail](https://github.com/RainLoop/rainloop-webmail)).
 
+Auto-backup to Amazon S3 using [istepanov/docker-backup-to-s3](https://github.com/istepanov/docker-backup-to-s3).
+
 It's part of the [uServer](https://github.com/users/ferdn4ndo/projects/1) stack project.
 
 
