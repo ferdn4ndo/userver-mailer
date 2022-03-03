@@ -4,8 +4,6 @@ services:
     container_name: userver-mail
     restart: unless-stopped
     image: tvial/docker-mailserver:latest
-    hostname: ${HOSTNAME}
-    domainname: ${DOMAINNAME}
     ports:
       - "25:25"
       - "143:143"
