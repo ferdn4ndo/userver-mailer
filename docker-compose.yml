@@ -37,9 +37,7 @@ services:
   userver-webmail:
     container_name: userver-webmail
     restart: unless-stopped
-    build:
-      context: ./webmail
-      dockerfile: Dockerfile
+    image: roundcube/roundcubemail:1.5.x-apache
     depends_on:
       - userver-mail
     env_file:
