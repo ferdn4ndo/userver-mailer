@@ -14,7 +14,7 @@ services:
       - ./state:/var/mail-state
       - ./logs:/var/log/mail
       - ./mail/config/:/tmp/docker-mailserver/
-      - ../userver-web/certs:/etc/letsencrypt
+      - ../userver-web/certs:/etc/letsencrypt/live
     env_file:
       - ./mail/.env
     cap_add:
