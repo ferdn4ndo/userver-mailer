@@ -3,7 +3,7 @@ services:
   userver-mail:
     container_name: userver-mail
     restart: unless-stopped
-    image: tvial/docker-mailserver:latest
+    image: tvial/docker-mailserver:release-v7.2.0
     ports:
       - "25:25"
       - "143:143"
@@ -14,7 +14,7 @@ services:
       - ./state:/var/mail-state
       - ./logs:/var/log/mail
       - ./mail/config/:/tmp/docker-mailserver/
-      - ../userver-web/certs:/certs:ro
+      - ../userver-web/certs:/etc/letsencrypt
     env_file:
       - ./mail/.env
     cap_add:
@@ -22,7 +22,9 @@ services:
       - SYS_PTRACE
 
   userver-mailbackup:
-    image: istepanov/backup-to-s3
+    build:
+      context: backup
+      dockerfile: Dockerfile
     container_name: userver-mailbackup
     restart: unless-stopped
     depends_on:
@@ -52,7 +54,10 @@ services:
   userver-postfixadmin:
     container_name: userver-postfixadmin
     restart: unless-stopped
-    image: postfixadmin:latest
+    build:
+      context: postfixadmin
+      dockerfile: Dockerfile
+    image: postfixadmin:3-apache
     expose:
       - 80
     env_file:
@@ -60,5 +65,5 @@ services:
 
 networks:
   default:
-    external:
-      name: nginx-proxy
+    name: nginx-proxy
+    external: true
