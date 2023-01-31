@@ -1,7 +1,7 @@
-FROM debian:jessie
+FROM python:3.9-alpine
 
-RUN apt-get update && \
-    apt-get install -y python python-pip cron && \
+RUN apk update && \
+    apk add bash && \
     rm -rf /var/lib/apt/lists/*
 
 RUN pip install s3cmd
