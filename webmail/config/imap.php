@@ -15,5 +15,4 @@ $config['imap_conn_options'] = array(
     'ciphers' => 'ALL:!ADH:!LOW:!EXP:!aNULL:+HIGH:+MEDIUM',
     'peer_name'         => getenv('TLS_PEER_NAME'),
   )
-); 
-
+);
