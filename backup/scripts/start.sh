@@ -29,6 +29,6 @@ else
     CRON_ENV="$CRON_ENV\nS3_PATH='$S3_PATH'"
     echo -e "$CRON_ENV\n$CRON_SCHEDULE /sync.sh > $LOGFIFO 2>&1" | crontab -
     crontab -l
-    cron
+    crond
     tail -f "$LOGFIFO"
 fi

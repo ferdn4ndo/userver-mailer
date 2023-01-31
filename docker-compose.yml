@@ -1,9 +1,8 @@
-version: '3'
+version: '3.9'
 services:
   userver-mail:
     container_name: userver-mail
-    restart: unless-stopped
-    image: tvial/docker-mailserver:release-v7.2.0
+    image: mailserver/docker-mailserver:11.3.1
     ports:
       - "25:25"
       - "143:143"
@@ -26,7 +25,6 @@ services:
       context: backup
       dockerfile: Dockerfile
     container_name: userver-mailbackup
-    restart: unless-stopped
     depends_on:
       - userver-mail
     env_file:
@@ -38,8 +36,7 @@ services:
 
   userver-webmail:
     container_name: userver-webmail
-    restart: unless-stopped
-    image: roundcube/roundcubemail:1.5.x-apache
+    image: roundcube/roundcubemail:1.6.x-apache
     depends_on:
       - userver-mail
     env_file:
@@ -50,18 +47,6 @@ services:
       - ../userver-web/certs:/certs:ro
       - ./webmail/sites-available:/etc/apache2/sites-available
       - ./webmail/config:/var/roundcube/config
-
-  userver-postfixadmin:
-    container_name: userver-postfixadmin
-    restart: unless-stopped
-    build:
-      context: postfixadmin
-      dockerfile: Dockerfile
-    image: postfixadmin:3-apache
-    expose:
-      - 80
-    env_file:
-      - ./postfixadmin/.env
 
 networks:
   default:
