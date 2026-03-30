@@ -1,10 +1,8 @@
-FROM python:3.9-alpine
+FROM debian:bookworm-slim
 
-RUN apk update && \
-    apk add bash && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends s3cmd cron ca-certificates && \
     rm -rf /var/lib/apt/lists/*
-
-RUN pip install s3cmd
 
 ADD s3cfg /root/.s3cfg
 

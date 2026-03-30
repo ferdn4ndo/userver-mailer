@@ -1,41 +1,84 @@
 # uServer Mailer
 
-A mail microservice stack containing SMTP, IMAP and POP servers (see [docker-mailserver](https://github.com/tomav/docker-mailserver)) as also a webmail client (see [rainloop-webmail](https://github.com/RainLoop/rainloop-webmail)).
+A small mail stack: SMTP/IMAP (and optional POP) via [docker-mailserver](https://github.com/docker-mailserver/docker-mailserver), webmail with [Roundcube](https://roundcube.net/), optional [PostfixAdmin](https://github.com/postfixadmin/postfixadmin), and scheduled backups to S3 using `s3cmd` (pattern inspired by [istepanov/docker-backup-to-s3](https://github.com/istepanov/docker-backup-to-s3)).
 
-Auto-backup to Amazon S3 using [istepanov/docker-backup-to-s3](https://github.com/istepanov/docker-backup-to-s3).
+Part of the [uServer](https://github.com/users/ferdn4ndo/projects/1) project.
 
-It's part of the [uServer](https://github.com/users/ferdn4ndo/projects/1) stack project.
+## Versions (pinned in `docker-compose.yml`)
 
+| Component        | Image / base                                      |
+|-----------------|---------------------------------------------------|
+| Mail server     | `ghcr.io/docker-mailserver/docker-mailserver:15.1.0` |
+| Webmail         | `roundcube/roundcubemail:latest-apache`           |
+| PostfixAdmin    | `postfixadmin:4.0.1-apache` (custom build on top) |
+| Backup          | `debian:bookworm-slim` + `s3cmd`                  |
 
 ## Setup
 
 ### Environment
 
-Copy both `mail/.env.template` and `webmail/.env.template` to `mail/.env` and `webmail/.env`, respectively, and then edit them to match your server configuration.
+1. Copy templates and edit:
 
+   - `mail/.env.template` → `mail/.env`
+   - `webmail/.env.template` → `webmail/.env`
+   - `backup/.env.template` → `backup/.env` (if using backups)
+   - `postfixadmin/.env.template` → `postfixadmin/.env` (if using PostfixAdmin)
 
-### Start Containers
-    docker-compose up --build
+2. **Compose hostname:** Create a `.env` file **next to** `docker-compose.yml` with:
 
-### Create your mail accounts
+   ```bash
+   MAIL_FQDN=mail.example.com
+   ```
 
-    ./mail/setup.sh email add <user@domain> <password>
+   Use the same FQDN as `OVERRIDE_HOSTNAME` / your MX record. Compose substitutes this into the mail container `hostname` (recommended by docker-mailserver).
 
-### Generate DKIM keys
+3. Ensure the external Docker network `nginx-proxy` exists (or change the `networks` section in `docker-compose.yml`).
 
-    ./mail/setup.sh config dkim
+### Start
 
-As the keys are generated, you can configure your DNS server by just pasting the content of `config/opendkim/keys/domain.tld/mail.txt` in your `domain.tld.hosts` zone.
+```bash
+docker compose up --build
+```
 
-### More commands
+### Mail accounts
 
-Check [this links from docker-mailserver](https://github.com/tomav/docker-mailserver/wiki/Setup-docker-mailserver-using-the-script-setup.sh) to get more information about the possible commands.
+```bash
+./mail/setup.sh email add user@domain.tld 'password'
+```
 
-### Restart and update the container as deamon
+With a running container named `userver-mail`:
 
-    docker-compose down
-    docker-compose up -d
+```bash
+./mail/setup.sh -c userver-mail email add user@domain.tld 'password'
+```
+
+### DKIM
+
+```bash
+./mail/setup.sh config dkim
+```
+
+Add the contents of `mail/config/opendkim/keys/<domain>/mail.txt` to DNS.
+
+### Further CLI / env reference
+
+- docker-mailserver: [usage](https://docker-mailserver.github.io/docker-mailserver/latest/usage/) and [environment](https://docker-mailserver.github.io/docker-mailserver/latest/config/environment/)
+- Setup script help: `./mail/setup.sh` (invalid args print usage)
+
+### Restart / update
+
+```bash
+docker compose pull
+docker compose up -d --build
+```
+
+## Upgrading from older stacks
+
+- **Mail data:** `./data` (maildir) and `./state` are generally compatible across major DMS upgrades; take a backup before upgrading.
+- **Deprecated env:** `DMS_DEBUG` was removed upstream — use `LOG_LEVEL` in `mail/.env` (see `mail/.env.template`).
+- **Getmail state (DMS v14 → v15):** If you used getmail and have state under `mail/config/getmail/`, see `scripts/migrate-from-legacy-dms.sh`.
+- **PostfixAdmin 3 → 4:** Start the new container and complete the DB upgrade via the web installer when prompted (`upgrade.php`), or follow [PostfixAdmin INSTALL](https://github.com/postfixadmin/postfixadmin/blob/master/INSTALL.TXT).
 
 ## License
 
-GNU Affero General Public License v3.0 as required by rainloop-webmail.
+The repository’s `LICENSE` file applies to the configuration and scripts in this repo. Bundled/container images (docker-mailserver, Roundcube, PostfixAdmin, Debian, etc.) are under their respective upstream licenses.

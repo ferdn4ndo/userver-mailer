@@ -1,11 +1,14 @@
-version: '3.9'
 services:
   userver-mail:
     container_name: userver-mail
-    image: mailserver/docker-mailserver:11.3.1
+    restart: unless-stopped
+    image: ghcr.io/docker-mailserver/docker-mailserver:15.1.0
+    # Must match your MX / OVERRIDE_HOSTNAME in mail/.env — set MAIL_FQDN in a `.env` next to this file
+    hostname: ${MAIL_FQDN:-mail.example.com}
     ports:
       - "25:25"
       - "143:143"
+      - "465:465"
       - "587:587"
       - "993:993"
     volumes:
@@ -19,6 +22,7 @@ services:
     cap_add:
       - NET_ADMIN
       - SYS_PTRACE
+    stop_grace_period: 1m
 
   userver-mailbackup:
     build:
@@ -36,7 +40,8 @@ services:
 
   userver-webmail:
     container_name: userver-webmail
-    image: roundcube/roundcubemail:1.6.x-apache
+    restart: unless-stopped
+    image: roundcube/roundcubemail:latest-apache
     depends_on:
       - userver-mail
     env_file:
@@ -47,6 +52,18 @@ services:
       - ../userver-web/certs:/certs:ro
       - ./webmail/sites-available:/etc/apache2/sites-available
       - ./webmail/config:/var/roundcube/config
+
+  userver-postfixadmin:
+    container_name: userver-postfixadmin
+    restart: unless-stopped
+    build:
+      context: postfixadmin
+      dockerfile: Dockerfile
+    image: userver-postfixadmin:4-apache
+    expose:
+      - 80
+    env_file:
+      - ./postfixadmin/.env
 
 networks:
   default:
