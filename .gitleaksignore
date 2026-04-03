@@ -1,0 +1,2 @@
+# CI-only PEM; fingerprint from gitleaks report (PR / history scans).
+5d8f9fa64e3a9d626728c1ea945b3aaec4b23a09:ci/certs/default.key:private-key:1

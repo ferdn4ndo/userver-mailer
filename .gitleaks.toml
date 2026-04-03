@@ -1,0 +1,21 @@
+# Extends built-in rules; suppress false positives for committed CI TLS material and historical paths.
+[extend]
+useDefault = true
+
+# Global allowlist (works on gitleaks 8.24.x as [allowlist]).
+[allowlist]
+description = "Self-signed TLS for CI webmail; legacy OpenDKIM paths in history."
+paths = [
+  '''ci/certs/default\.key''',
+  '''mail/config/opendkim/keys/.*/mail\.private''',
+]
+
+# Rule-level allowlists merge into the built-in `private-key` rule (see gitleaks config.extend()).
+[[rules]]
+id = "private-key"
+
+[[rules.allowlists]]
+paths = [
+  '''ci/certs/default\.key''',
+  '''mail/config/opendkim/keys/.*/mail\.private''',
+]

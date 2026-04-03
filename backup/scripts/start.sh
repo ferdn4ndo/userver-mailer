@@ -2,7 +2,7 @@
 
 set -e
 
-: ${S3_PATH:?"S3_PATH env variable is required"}
+: "${S3_PATH:?"S3_PATH env variable is required"}"
 export DATA_PATH=${DATA_PATH:-/data/}
 CRON_SCHEDULE=${CRON_SCHEDULE:-0 1 * * *}
 
@@ -29,6 +29,7 @@ else
     CRON_ENV="$CRON_ENV\nS3_PATH='$S3_PATH'"
     echo -e "$CRON_ENV\n$CRON_SCHEDULE /sync.sh > $LOGFIFO 2>&1" | crontab -
     crontab -l
-    crond
+    # Debian cron package provides `cron`, not BusyBox `crond`.
+    cron
     tail -f "$LOGFIFO"
 fi

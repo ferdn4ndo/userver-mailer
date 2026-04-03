@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
 ##
 # Wrapper for various setup scripts included in the docker-mailserver
@@ -14,9 +14,9 @@ _check_root() {
 }
 
 if [ -z "$CRI" ]; then
-  if [ ! -z "$(command -v docker)" ]; then
+  if [ -n "$(command -v docker)" ]; then
     CRI=docker
-  elif [ ! -z "$(command -v podman)" ]; then
+  elif [ -n "$(command -v podman)" ]; then
     CRI=podman
     _check_root
   else
@@ -30,20 +30,20 @@ INFO=$($CRI ps \
   --format="{{.Image}} {{.Names}} {{.Command}}" | \
   grep "supervisord -c /etc/supervisor/supervisord.conf")
 
-IMAGE_NAME=$(echo $INFO | awk '{print $1}')
-CONTAINER_NAME=$(echo $INFO | awk '{print $2}')
+IMAGE_NAME=$(echo "$INFO" | awk '{print $1}')
+CONTAINER_NAME=$(echo "$INFO" | awk '{print $2}')
 DEFAULT_CONFIG_PATH="$(pwd)/config"
 USE_CONTAINER=false
 
 _update_config_path() {
-  if [ ! -z "$CONTAINER_NAME" ]; then
-    VOLUME=$(docker inspect $CONTAINER_NAME \
+  if [ -n "$CONTAINER_NAME" ]; then
+    VOLUME=$(docker inspect "$CONTAINER_NAME" \
       --format="{{range .Mounts}}{{ println .Source .Destination}}{{end}}" | \
       grep "/tmp/docker-mailserver$" 2>/dev/null)
   fi
 
-  if [ ! -z "$VOLUME" ]; then
-    CONFIG_PATH=$(echo $VOLUME | awk '{print $1}')
+  if [ -n "$VOLUME" ]; then
+    CONFIG_PATH=$(echo "$VOLUME" | awk '{print $1}')
   fi
 }
 
@@ -137,7 +137,7 @@ fi
 _docker_image() {
   if [ "$USE_CONTAINER" = true ]; then
     # Reuse existing container specified on command line
-    ${CRI} exec ${USE_TTY} "$CONTAINER_NAME" "$@"
+    ${CRI} exec "${USE_TTY}" "$CONTAINER_NAME" "$@"
   else
     # Start temporary container with specified image
     if ! _docker_image_exists "$IMAGE_NAME"; then
@@ -148,13 +148,13 @@ _docker_image() {
     ${CRI} run \
       --rm \
       -v "$CONFIG_PATH":/tmp/docker-mailserver \
-      ${USE_TTY} "$IMAGE_NAME" $@
+      "${USE_TTY}" "$IMAGE_NAME" "$@"
   fi
 }
 
 _docker_container() {
   if [ -n "$CONTAINER_NAME" ]; then
-    ${CRI} exec ${USE_TTY} "$CONTAINER_NAME" "$@"
+    ${CRI} exec "${USE_TTY}" "$CONTAINER_NAME" "$@"
   else
     echo "The docker-mailserver is not running!"
     exit 1
@@ -182,7 +182,6 @@ while getopts ":c:i:p:" OPT; do
       if [ ! -d "$WISHED_CONFIG_PATH" ]; then
         echo "Directory doesn't exist"
         _usage
-        exit 1
       fi
       ;;
    \?)
@@ -191,11 +190,11 @@ while getopts ":c:i:p:" OPT; do
   esac
 done
 
-if [ ! -n "$WISHED_CONFIG_PATH" ]; then
+if [ -z "$WISHED_CONFIG_PATH" ]; then
   # no wished config path
   _update_config_path
 
-  if [ ! -n "$CONFIG_PATH" ]; then
+  if [ -z "$CONFIG_PATH" ]; then
     CONFIG_PATH=$DEFAULT_CONFIG_PATH
   fi
 else
@@ -211,19 +210,19 @@ case $1 in
     case $1 in
       add)
         shift
-        _docker_image addmailuser $@
+        _docker_image addmailuser "$@"
         ;;
       update)
         shift
-        _docker_image updatemailuser $@
+        _docker_image updatemailuser "$@"
         ;;
       del)
         shift
-        _docker_image delmailuser $@
+        _docker_image delmailuser "$@"
         ;;
       restrict)
         shift
-        _docker_container restrict-access $@
+        _docker_container restrict-access "$@"
         ;;
       list)
         _docker_image listmailuser
@@ -239,15 +238,15 @@ case $1 in
     case $1 in
         add)
           shift
-          _docker_image addalias $@
+          _docker_image addalias "$@"
           ;;
         del)
           shift
-          _docker_image delalias $@
+          _docker_image delalias "$@"
           ;;
         list)
           shift
-          _docker_image listalias $@
+          _docker_image listalias "$@"
           ;;
         *)
           _usage
@@ -260,11 +259,11 @@ case $1 in
     case $1 in
         set)
           shift
-          _docker_image setquota $@
+          _docker_image setquota "$@"
           ;;
         del)
           shift
-          _docker_image delquota $@
+          _docker_image delquota "$@"
           ;;
         *)
           _usage
@@ -276,7 +275,7 @@ case $1 in
     shift
     case $1 in
       dkim)
-        _docker_image generate-dkim-config $2
+        _docker_image generate-dkim-config "$2"
         ;;
       ssl)
         _docker_image generate-ssl-certificate "$2"
@@ -292,15 +291,15 @@ case $1 in
     case $1 in
       add-domain)
         shift
-        _docker_image addrelayhost $@
+        _docker_image addrelayhost "$@"
         ;;
       add-auth)
         shift
-        _docker_image addsaslpassword $@
+        _docker_image addsaslpassword "$@"
         ;;
       exclude-domain)
         shift
-        _docker_image excluderelaydomain $@
+        _docker_image excluderelaydomain "$@"
         ;;
       *)
         _usage
@@ -316,7 +315,7 @@ case $1 in
         ;;
       fail2ban)
         shift
-        _docker_container fail2ban $@
+        _docker_container fail2ban "$@"
         ;;
       show-mail-logs)
         _docker_container cat /var/log/mail/mail.log

@@ -1,0 +1,21 @@
+name: Compose validation
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  validate-ci-compose:
+    name: docker compose config (ci/compose.yaml)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Prepare CI files
+        run: ./scripts/ci-prepare.sh
+
+      - name: Validate compose specification
+        run: docker compose -f ci/compose.yaml --project-directory . config --quiet
