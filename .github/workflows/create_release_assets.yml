@@ -34,7 +34,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # No checkout step — gh would otherwise resolve the repo from .git and fail.
           gh release upload "${{ github.event.release.tag_name }}" \
             "${ARCHIVE_NAME}.tar.gz" \
             checksum.txt \
-            --clobber
+            --clobber \
+            --repo "${{ github.repository }}"
