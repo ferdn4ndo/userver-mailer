@@ -1,5 +1,12 @@
 # uServer Mailer
 
+[![E2E](https://github.com/ferdn4ndo/userver-mailer/actions/workflows/test_e2e.yml/badge.svg)](https://github.com/ferdn4ndo/userver-mailer/actions/workflows/test_e2e.yml)
+[![Compose](https://github.com/ferdn4ndo/userver-mailer/actions/workflows/test_compose.yml/badge.svg)](https://github.com/ferdn4ndo/userver-mailer/actions/workflows/test_compose.yml)
+[![GitLeaks](https://github.com/ferdn4ndo/userver-mailer/actions/workflows/test_code_leaks.yml/badge.svg)](https://github.com/ferdn4ndo/userver-mailer/actions/workflows/test_code_leaks.yml)
+[![ShellCheck](https://github.com/ferdn4ndo/userver-mailer/actions/workflows/test_code_quality.yml/badge.svg)](https://github.com/ferdn4ndo/userver-mailer/actions/workflows/test_code_quality.yml)
+[![Release](https://img.shields.io/github/v/release/ferdn4ndo/userver-mailer)](https://github.com/ferdn4ndo/userver-mailer/releases)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+
 A small mail stack: SMTP/IMAP (and optional POP) via [docker-mailserver](https://github.com/docker-mailserver/docker-mailserver), webmail with [Roundcube](https://roundcube.net/), optional [PostfixAdmin](https://github.com/postfixadmin/postfixadmin), and scheduled backups to S3 using `s3cmd` (pattern inspired by [istepanov/docker-backup-to-s3](https://github.com/istepanov/docker-backup-to-s3)).
 
 Part of the [uServer](https://github.com/users/ferdn4ndo/projects/1) project.
