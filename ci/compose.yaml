@@ -1,0 +1,72 @@
+# CI/local integration stack — keep image tags in sync with docker-compose.yml.
+# Usage (from repo root): docker compose -f ci/compose.yaml --project-directory . up -d --build
+#
+services:
+  userver-mail:
+    container_name: userver-mail-ci
+    hostname: mail.ci.local
+    image: ghcr.io/docker-mailserver/docker-mailserver:15.1.0
+    ports:
+      - "2525:25"
+      - "1143:143"
+      - "1587:587"
+      - "1993:993"
+    volumes:
+      - ./ci/data/mail:/var/mail
+      - ./ci/data/state:/var/mail-state
+      - ./ci/data/logs:/var/log/mail
+      - ./mail/config:/tmp/docker-mailserver/
+    env_file:
+      - ./ci/mail.env
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+    healthcheck:
+      # Match upstream DMS compose (IPv4 SMTP listener).
+      test: ["CMD-SHELL", "ss --listening --ipv4 --tcp | grep --silent ':smtp' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 120s
+
+  userver-mailbackup:
+    build:
+      context: backup
+      dockerfile: Dockerfile
+    container_name: userver-mailbackup-ci
+    depends_on:
+      userver-mail:
+        condition: service_healthy
+    env_file:
+      - ./ci/backup.env
+    volumes:
+      - ./ci/data/mail:/data/mail-data:ro
+      - ./ci/data/state:/data/mail-state:ro
+      - ./ci/data/logs:/data/mail-logs:ro
+
+  userver-webmail:
+    container_name: userver-webmail-ci
+    image: roundcube/roundcubemail:1.6.x-apache
+    depends_on:
+      userver-mail:
+        condition: service_healthy
+    ports:
+      # 18080 avoids clashes with common local stacks (change WEBMAIL_PORT in run_e2e_tests.sh if you remap)
+      - "18080:80"
+    env_file:
+      - ./ci/webmail.env
+    volumes:
+      - ./ci/certs:/certs:ro
+      - ./webmail/sites-available:/etc/apache2/sites-available
+      - ./webmail/config:/var/roundcube/config
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://127.0.0.1/ || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 90s
+
+networks:
+  default:
+    name: nginx-proxy-ci
+    driver: bridge

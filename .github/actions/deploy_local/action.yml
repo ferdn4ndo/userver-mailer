@@ -1,0 +1,33 @@
+########################################################################################
+# Composite action: prepare CI env + TLS, then start the stack from ci/compose.yaml   #
+#--------------------------------------------------------------------------------------#
+# Requires: actions/checkout on this repo                                              #
+#                                                                                      #
+#   - uses: ./.github/actions/deploy_local                                             #
+########################################################################################
+
+name: "Mailer stack (CI compose)"
+description: "Generate ci/*.env and TLS material, then build and start ci/compose.yaml"
+inputs:
+  compose-file:
+    description: "Compose file path relative to repo root"
+    required: false
+    default: ci/compose.yaml
+  wait-timeout:
+    description: "Seconds to wait for healthchecks (docker compose --wait)"
+    required: false
+    default: "300"
+runs:
+  using: "composite"
+  steps:
+    - name: Prepare CI env files and certificates
+      run: ./scripts/ci-prepare.sh
+      shell: bash
+
+    - name: Build and start stack
+      run: |
+        set -euo pipefail
+        docker compose --project-name userver-mailer-ci \
+          -f "${{ inputs.compose-file }}" --project-directory "${GITHUB_WORKSPACE}" \
+          up --build --detach --wait --wait-timeout "${{ inputs.wait-timeout }}"
+      shell: bash

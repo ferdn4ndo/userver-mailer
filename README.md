@@ -13,7 +13,11 @@ Part of the [uServer](https://github.com/users/ferdn4ndo/projects/1) project.
 | PostfixAdmin    | `postfixadmin:4.0.1-apache` (custom build on top) |
 | Backup          | `debian:bookworm-slim` + `s3cmd`                  |
 
-## Setup
+- Docker with Compose v2
+- For production `docker-compose.yml`: external Docker network `nginx-proxy` (or adjust `networks` in the file)
+- TLS material under `../userver-web/certs` as referenced by the default compose file
+
+## Production stack (`docker-compose.yml`)
 
 ### Environment
 

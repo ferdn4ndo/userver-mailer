@@ -1,0 +1,27 @@
+name: E2E Tests
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+concurrency:
+  group: e2e-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run-ats:
+    name: Integration stack (Docker Compose)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v6
+
+      - name: Build and start mailer stack (CI compose)
+        uses: ./.github/actions/deploy_local
+
+      - name: Run integration checks
+        run: ./run_e2e_tests.sh
+        shell: bash
