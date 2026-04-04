@@ -35,13 +35,9 @@ Part of the [uServer](https://github.com/users/ferdn4ndo/projects/1) project.
    - `backup/.env.template` → `backup/.env` (if using backups)
    - `postfixadmin/.env.template` → `postfixadmin/.env` (if using PostfixAdmin)
 
-2. **Compose hostname:** Create a `.env` file **next to** `docker-compose.yml` with:
+2. **Compose hostname + DMS TLS:** Create a `.env` file **next to** `docker-compose.yml` with `MAIL_FQDN` set to your mail **FQDN** (same as MX / the name under `../userver-web/certs` for Let’s Encrypt, e.g. `mail.sd40.com.br`). If `MAIL_FQDN` is missing, Compose falls back to `mail.example.com` and docker-mailserver will look for certs under **that** name — which breaks `SSL_TYPE=letsencrypt` when your real cert folder uses your real domain.
 
-   ```bash
-   MAIL_FQDN=mail.example.com
-   ```
-
-   Use the same FQDN as `OVERRIDE_HOSTNAME` / your MX record. Compose substitutes this into the mail container `hostname` (recommended by docker-mailserver).
+   In `mail/.env`, set **`OVERRIDE_HOSTNAME`** to the **same FQDN** as `LETSENCRYPT_HOST` / `MAIL_FQDN`. DMS does not read `LETSENCRYPT_HOST`; it needs `OVERRIDE_HOSTNAME` (or a correct container hostname) to resolve `/etc/letsencrypt/live/<FQDN>/`.
 
 3. Ensure the external Docker network `nginx-proxy` exists (or change the `networks` section in `docker-compose.yml`).
 
